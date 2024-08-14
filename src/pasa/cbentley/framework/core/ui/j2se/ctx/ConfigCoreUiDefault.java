@@ -1,8 +1,8 @@
-package pasa.cbentley.framework.coreui.j2se.ctx;
+package pasa.cbentley.framework.core.ui.j2se.ctx;
 
 import pasa.cbentley.byteobjects.src4.ctx.ConfigAbstractBO;
 import pasa.cbentley.core.src4.ctx.UCtx;
-import pasa.cbentley.framework.coreui.src4.tech.IInputConstants;
+import pasa.cbentley.framework.core.ui.src4.tech.ITechInputConstants;
 
 public class ConfigCoreUiDefault extends ConfigAbstractBO implements IConfigCoreUiJ2se {
 
@@ -33,6 +33,6 @@ public class ConfigCoreUiDefault extends ConfigAbstractBO implements IConfigCore
    }
 
    public int getAllerRetourMinAmplitudePixel() {
-      return IInputConstants.BF_ALLER_RETOUR_MIN_AMPLITUDE;
+      return ITechInputConstants.BF_ALLER_RETOUR_MIN_AMPLITUDE;
    }
 }

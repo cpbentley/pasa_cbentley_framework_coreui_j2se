@@ -1,8 +1,8 @@
-package pasa.cbentley.framework.coreui.j2se.ctx;
+package pasa.cbentley.framework.core.ui.j2se.ctx;
 
 import pasa.cbentley.core.src4.ctx.UCtx;
-import pasa.cbentley.framework.coreui.j2se.ctx.IConfigCoreUiJ2se;
-import pasa.cbentley.framework.coreui.src4.ctx.ConfigCoreUiDefault;
+import pasa.cbentley.framework.core.ui.j2se.ctx.IConfigCoreUiJ2se;
+import pasa.cbentley.framework.core.ui.src4.ctx.ConfigCoreUiDefault;
 
 public class ConfigCoreUIJ2SEDefault extends ConfigCoreUiDefault implements IConfigCoreUiJ2se {
 
