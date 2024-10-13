@@ -14,9 +14,9 @@ import pasa.cbentley.framework.core.ui.j2se.engine.HostFeatureUiJ2se;
 import pasa.cbentley.framework.core.ui.j2se.engine.HostServiceUiJ2se;
 import pasa.cbentley.framework.core.ui.src4.ctx.CoreUiCtx;
 import pasa.cbentley.framework.core.ui.src4.engine.CanvasHostAbstract;
-import pasa.cbentley.framework.core.ui.src4.engine.WrapperAbstract;
 import pasa.cbentley.framework.core.ui.src4.interfaces.IHostGestures;
 import pasa.cbentley.framework.core.ui.src4.tech.ITechHostUI;
+import pasa.cbentley.framework.core.ui.src4.wrapper.WrapperAbstract;
 
 /**
  * Template for {@link CoreUiCtx} implementations on the J2SE platform.
@@ -28,7 +28,7 @@ import pasa.cbentley.framework.core.ui.src4.tech.ITechHostUI;
  * @author Charles Bentley
  *
  */
-public abstract class CoreUiJ2seCtx extends CoreUiCtx implements ITechCtxSettingsCoreUIJ2se {
+public abstract class CoreUiJ2seCtx extends CoreUiCtx implements ITechCtxSettingsCoreUiJ2se {
 
    private boolean              isNumPadInvert = false;
 

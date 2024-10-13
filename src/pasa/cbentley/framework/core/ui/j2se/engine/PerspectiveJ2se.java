@@ -44,6 +44,10 @@ public class PerspectiveJ2se extends ObjectCUC implements IStatorable {
       // TODO Auto-generated method stub
 
    }
+   
+   public void stateWriteToParamSub(StatorWriter state) {
+      // TODO Auto-generated method stub
+   }
 
    //#mdebug
    public void toString(Dctx dc) {

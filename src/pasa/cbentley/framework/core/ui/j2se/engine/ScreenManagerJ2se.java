@@ -18,12 +18,12 @@ import pasa.cbentley.framework.core.ui.src4.ctx.CoreUiCtx;
 import pasa.cbentley.framework.core.ui.src4.ctx.IConfigCoreUi;
 import pasa.cbentley.framework.core.ui.src4.ctx.ObjectCUC;
 import pasa.cbentley.framework.core.ui.src4.engine.CanvasHostAbstract;
-import pasa.cbentley.framework.core.ui.src4.engine.WrapperAbstract;
 import pasa.cbentley.framework.core.ui.src4.interfaces.ICanvasAppli;
 import pasa.cbentley.framework.core.ui.src4.interfaces.ICanvasHost;
 import pasa.cbentley.framework.core.ui.src4.tech.IBOCanvasHost;
 import pasa.cbentley.framework.core.ui.src4.tech.IBOFramePos;
 import pasa.cbentley.framework.core.ui.src4.tech.ITechHostUI;
+import pasa.cbentley.framework.core.ui.src4.wrapper.WrapperAbstract;
 
 public class ScreenManagerJ2se extends ObjectCUC implements ITechHostUI {
 
@@ -86,7 +86,7 @@ public class ScreenManagerJ2se extends ObjectCUC implements ITechHostUI {
     * Else try in the ScreenConfig
     * 
     * Makes sure the {@link ByteObject} is valid with a {@link IBOFramePos}
-    * When {@link IBOCanvasHost#TCANVAS_OFFSET_03_ID2} is zero.
+    * When {@link IBOCanvasHost#CANVAS_HOST_OFFSET_03_ID2} is zero.
     * This is ignored.
     * <br>
     * The xywh values defined in {@link IBOFramePos} are used CanvasTech is null or FramePos is null.
@@ -101,7 +101,7 @@ public class ScreenManagerJ2se extends ObjectCUC implements ITechHostUI {
          tech = cuc.createBOCanvasHostDefault();
       } else {
          //look up tech id in config
-         int idInput = tech.get2(IBOCanvasHost.TCANVAS_OFFSET_03_ID2);
+         int idInput = tech.get2(IBOCanvasHost.CANVAS_HOST_OFFSET_03_ID2);
          if (idInput != 0) {
             //id was set previously
             if (screenConfigLoaded != null) {
@@ -113,7 +113,7 @@ public class ScreenManagerJ2se extends ObjectCUC implements ITechHostUI {
                   //we have to find the canvas tech using the ID
                   for (int i = 0; i < bos.length; i++) {
                      if (bos[i].getType() == tech.getType()) {
-                        int ids = bos[i].get2(IBOCanvasHost.TCANVAS_OFFSET_03_ID2);
+                        int ids = bos[i].get2(IBOCanvasHost.CANVAS_HOST_OFFSET_03_ID2);
                         if (ids == idInput) {
                            tech = bos[i]; //assign the found tech
                         }
@@ -166,15 +166,15 @@ public class ScreenManagerJ2se extends ObjectCUC implements ITechHostUI {
       return (CoreUiJ2seCtx) cuc;
    }
 
-   public void setPosToCanvasHost(ByteObject tech) {
+   public void setPosToCanvasHost(ByteObject boCanvasHost) {
       //set starting values for non nulls
-      ByteObject framePos = tech.getSubIndexed2(IBOCanvasHost.TCANVAS_OFFSET_14_FRAMEPOS2);
+      ByteObject framePos = boCanvasHost.getSubIndexed1(IBOCanvasHost.CANVAS_HOST_OFFSET_14_FRAMEPOS1);
       if (framePos == null) {
          cuc.createBOFrameDefault();
          //set default size
          this.setDefaultXYWH(framePos);
          //set which ID? none. which means the canvas is not saved
-         tech.setSubIndexed2(framePos, IBOCanvasHost.TCANVAS_OFFSET_14_FRAMEPOS2);
+         boCanvasHost.setSubIndexed2(framePos, IBOCanvasHost.CANVAS_HOST_OFFSET_14_FRAMEPOS1);
       } else {
          IConfigCoreUiJ2se cfgUI = this.getCoreUiJ2seCtx().getConfigUIJ2se();
          int w = cfgUI.getDefaultCanvasW();
@@ -214,14 +214,14 @@ public class ScreenManagerJ2se extends ObjectCUC implements ITechHostUI {
          screenConfig.addByteObject(boCanvasHost);
       }
       //write the full config with all canvashosts and positions
-      statorWriterScreenConfig.writeByteObject(screenConfig);
+      statorWriterScreenConfig.dataWriteByteObject(screenConfig);
       ///////// END of writing 
 
       //Now write our canvas in the main StatorWriter
       stator.getWriter().writeInt(numCanvases);
       for (int i = 0; i < numCanvases; i++) {
          CanvasHostAbstract ch = canvases[i];
-         stator.writerToStatorable(ch);
+         stator.dataWriterToStatorable(ch);
       }
 
       //the caller/coordinator decides the key(screen config) of this state if any 
@@ -286,7 +286,7 @@ public class ScreenManagerJ2se extends ObjectCUC implements ITechHostUI {
          framePos.setFlag(IBOFramePos.FPOS_OFFSET_01_FLAG, IBOFramePos.FPOS_FLAG_1_FULLSCREEN, isFullScreen);
 
          //get current screen?
-         canvasTech.setSubIndexed2(framePos, IBOCanvasHost.TCANVAS_OFFSET_14_FRAMEPOS2);
+         canvasTech.setSubIndexed2(framePos, IBOCanvasHost.CANVAS_HOST_OFFSET_14_FRAMEPOS1);
 
          //state of the canvas content?
 

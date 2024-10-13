@@ -1,5 +1,8 @@
 package pasa.cbentley.framework.core.ui.j2se.engine;
 
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+
 import pasa.cbentley.core.src4.interfaces.IHostFeature;
 import pasa.cbentley.framework.core.draw.j2se.engine.HostFeatureDrawJ2se;
 import pasa.cbentley.framework.core.ui.j2se.ctx.CoreUiJ2seCtx;
@@ -25,6 +28,8 @@ public class HostFeatureUiJ2se extends ObjectCUC implements IHostFeature, ITechH
 
    public boolean isHostFeatureEnabled(int featureID) {
       switch (featureID) {
+         case SUP_ID_11_KEY_MAJ_TOGGLE:
+            return isMajOn();
          case ITechHostFeatureDrawUI.SUP_ID_50_SENSOR_ACCELEROMETER:
             return false;
          default:
@@ -42,6 +47,7 @@ public class HostFeatureUiJ2se extends ObjectCUC implements IHostFeature, ITechH
    public boolean isHostFeatureSupported(int featureID) {
       switch (featureID) {
          case SUP_ID_01_KEYBOARD:
+         case SUP_ID_11_KEY_MAJ_TOGGLE:
          case SUP_ID_02_POINTERS:
          case SUP_ID_03_OPEN_GL:
          case SUP_ID_24_MULTIPLE_WINDOWS:
@@ -54,8 +60,15 @@ public class HostFeatureUiJ2se extends ObjectCUC implements IHostFeature, ITechH
       }
    }
 
+   public boolean isMajOn() {
+      return Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
+   }
+
    public boolean setHostFeatureEnabled(int featureID, boolean b) {
       switch (featureID) {
+         case SUP_ID_11_KEY_MAJ_TOGGLE:
+            setMajOn(b);
+            return true;
          default:
             return hostFeatureDrawJ2se.setHostFeatureEnabled(featureID, b);
       }
@@ -84,6 +97,10 @@ public class HostFeatureUiJ2se extends ObjectCUC implements IHostFeature, ITechH
 
    public boolean setHostFeatureOn(int featureID) {
       return this.setHostFeatureEnabled(featureID, true);
+   }
+
+   public void setMajOn(boolean b) {
+      Toolkit.getDefaultToolkit().setLockingKeyState(KeyEvent.VK_CAPS_LOCK, b);
    }
 
 }

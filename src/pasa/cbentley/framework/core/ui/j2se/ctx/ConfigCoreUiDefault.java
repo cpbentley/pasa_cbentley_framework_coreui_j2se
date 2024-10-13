@@ -6,9 +6,11 @@ import pasa.cbentley.framework.core.ui.src4.tech.ITechInputConstants;
 
 public class ConfigCoreUiDefault extends ConfigAbstractBO implements IConfigCoreUiJ2se {
 
-   private int w;
-
    private int h;
+
+   protected int keyMappingType = 0;
+
+   private int w;
 
    public ConfigCoreUiDefault(UCtx uc, int w, int h) {
       super(uc);
@@ -16,23 +18,43 @@ public class ConfigCoreUiDefault extends ConfigAbstractBO implements IConfigCore
       this.h = h;
    }
 
-   public boolean isFullscreen() {
-      return false;
-   }
-
-   public String getIconPathDefault() {
-      return null;
-   }
-
-   public int getDefaultCanvasW() {
-      return w;
+   public int getAllerRetourMinAmplitudePixel() {
+      return ITechInputConstants.BF_ALLER_RETOUR_MIN_AMPLITUDE;
    }
 
    public int getDefaultCanvasH() {
       return h;
    }
 
-   public int getAllerRetourMinAmplitudePixel() {
-      return ITechInputConstants.BF_ALLER_RETOUR_MIN_AMPLITUDE;
+   public int getDefaultCanvasW() {
+      return w;
+   }
+
+   public String getIconPathDefault() {
+      return null;
+   }
+
+   public int getKeyMappingTypeJ2se() {
+      return keyMappingType;
+   }
+
+   public boolean isFullscreen() {
+      return false;
+   }
+
+   public int getDefaultCanvasX() {
+      return 0;
+   }
+
+   public int getDefaultCanvasY() {
+      return 0;
+   }
+
+   public boolean isCenterPosition() {
+      return true;
+   }
+
+   public boolean isRatioSize() {
+      return true;
    }
 }

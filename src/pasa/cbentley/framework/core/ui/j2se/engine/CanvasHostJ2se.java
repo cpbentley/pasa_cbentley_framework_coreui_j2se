@@ -1,23 +1,25 @@
 package pasa.cbentley.framework.core.ui.j2se.engine;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
 import pasa.cbentley.byteobjects.src4.core.ByteObject;
-import pasa.cbentley.byteobjects.src4.stator.StatorBO;
 import pasa.cbentley.byteobjects.src4.stator.StatorWriterBO;
 import pasa.cbentley.core.src4.logging.Dctx;
 import pasa.cbentley.core.src4.stator.ITechStator;
-import pasa.cbentley.core.src4.stator.Stator;
 import pasa.cbentley.core.src4.stator.StatorReader;
 import pasa.cbentley.core.src4.stator.StatorWriter;
 import pasa.cbentley.framework.core.ui.j2se.ctx.CoreUiJ2seCtx;
 import pasa.cbentley.framework.core.ui.j2se.ctx.IConfigCoreUiJ2se;
+import pasa.cbentley.framework.core.ui.src4.ctx.IBOTypesCoreUi;
 import pasa.cbentley.framework.core.ui.src4.engine.CanvasHostAbstract;
-import pasa.cbentley.framework.core.ui.src4.engine.WrapperAbstract;
 import pasa.cbentley.framework.core.ui.src4.event.SenseEvent;
 import pasa.cbentley.framework.core.ui.src4.event.VoiceEvent;
 import pasa.cbentley.framework.core.ui.src4.interfaces.ITechSenses;
+import pasa.cbentley.framework.core.ui.src4.tech.IBOCanvasHost;
 import pasa.cbentley.framework.core.ui.src4.tech.IBOFramePos;
+import pasa.cbentley.framework.core.ui.src4.wrapper.WrapperAbstract;
 
 public abstract class CanvasHostJ2se extends CanvasHostAbstract {
 
@@ -32,8 +34,8 @@ public abstract class CanvasHostJ2se extends CanvasHostAbstract {
 
    protected WrapperAbstractJ2se wrapperJ2SE;
 
-   public CanvasHostJ2se(CoreUiJ2seCtx j2seCtx, ByteObject tech) {
-      super(j2seCtx, tech);
+   public CanvasHostJ2se(CoreUiJ2seCtx j2seCtx, ByteObject boCanvasHost) {
+      super(j2seCtx, boCanvasHost);
       this.cj2c = j2seCtx;
    }
 
@@ -43,29 +45,6 @@ public abstract class CanvasHostJ2se extends CanvasHostAbstract {
 
    public void canvasShow() {
       wrapperJ2SE.canvasShow();
-   }
-
-   /**
-    * Method for those wrappers that just use the default frame positions.
-    * 
-    * This is only called by host implementations that have movable frames
-    * 
-    * @param state
-    */
-   protected void stateWriteHelperFrame(StatorWriter state) {
-      //sets current pos. This is the absolute position
-
-      //delegate to the wrapper how to set the ui state
-      ByteObject framePos = cuc.createBOFrameDefault();
-      CanvasHostAbstract ch = this;
-      int cx = ch.getICX(); // what is this? the wrapper position or the component position which is 0
-      framePos.set2(IBOFramePos.FPOS_OFFSET_02_X2, cx);
-      framePos.set2(IBOFramePos.FPOS_OFFSET_03_Y2, ch.getICY());
-      framePos.set2(IBOFramePos.FPOS_OFFSET_04_W2, ch.getICWidth());
-      framePos.set2(IBOFramePos.FPOS_OFFSET_05_H2, ch.getICHeight());
-
-      boolean isFullScreen = ch.isCanvasFeatureEnabled(SUP_ID_27_FULLSCREEN);
-      framePos.setFlag(IBOFramePos.FPOS_OFFSET_01_FLAG, IBOFramePos.FPOS_FLAG_1_FULLSCREEN, isFullScreen);
    }
 
    public int getICX() {
@@ -107,35 +86,76 @@ public abstract class CanvasHostJ2se extends CanvasHostAbstract {
       return false;
    }
 
-   public void setDefaultStartPosition() {
+   public void setStartPositionAndSize() {
       //api method generates an event
-      setDefaultStartPosition(false);
+      setStartPositionAndSize(false);
    }
 
    /**
     * Must be called once the wrapper has been set
     * @param isGenerateEvent false when init first time
     */
-   public void setDefaultStartPosition(boolean isGenerateEvent) {
+   public void setStartPositionAndSize(boolean isGenerateEvent) {
       if (wrapperJ2SE == null) {
          throw new NullPointerException();
       }
+
+      //wrapper is known already
+      
       //size it by default using config values
       IConfigCoreUiJ2se configUIJ2se = cj2c.getConfigUIJ2se();
       int w = configUIJ2se.getDefaultCanvasW();
       int h = configUIJ2se.getDefaultCanvasH();
+      int x = configUIJ2se.getDefaultCanvasX();
+      int y = configUIJ2se.getDefaultCanvasY();
+      ByteObject boCanvasHost = getBOCanvasHost();
+      boolean isCustomPosition = boCanvasHost.hasFlag(IBOCanvasHost.CANVAS_HOST_OFFSET_02_FLAX1, IBOCanvasHost.CANVAS_HOST_FLAGX_1_CUSTOM_POS);
+      if (isCustomPosition) {
+         ByteObject framePos = boCanvasHost.getSubIndexed1(IBOCanvasHost.CANVAS_HOST_OFFSET_14_FRAMEPOS1);
+         if (framePos != null) {
+            if (framePos.getType() == IBOTypesCoreUi.TYPE_8_FRAME_POS) {
+
+               //
+               x = framePos.get2Signed(IBOFramePos.FPOS_OFFSET_02_X2);
+               y = framePos.get2Signed(IBOFramePos.FPOS_OFFSET_03_Y2);
+
+               w = framePos.get2(IBOFramePos.FPOS_OFFSET_04_W2);
+               h = framePos.get2(IBOFramePos.FPOS_OFFSET_05_H2);
+
+            }
+         } else {
+            //#debug
+            toDLog().pNull("ByteObject framePos is null", this, CanvasHostJ2se.class, "setStartPositionAndSize@126", LVL_05_FINE, true);
+         }
+      } else {
+         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+         boolean sizeRatio = configUIJ2se.isRatioSize();
+         if (sizeRatio) {
+            w = screenSize.width / 2;
+            h = screenSize.height / 2;
+         }
+
+         boolean b = configUIJ2se.isCenterPosition();
+         if (b) {
+            x = screenSize.width / 2 - w / 2;
+            y = screenSize.height / 2 - h / 2;
+         }
+      }
 
       //#debug
-      toDLog().pFlow("width=" + w + " height=" + h, this, CanvasHostJ2se.class, "setDefaultStartPosition@line82", LVL_05_FINE, true);
+      toDLog().pFlow("width=" + w + " height=" + h, this, CanvasHostJ2se.class, "setStartPositionAndSize@144", LVL_05_FINE, true);
 
       icSetSize(w, h);
       if (isGenerateEvent) {
          canvasSizeChangedBridge(w, h);
       }
 
-      //position it on the center of the screen      
-      //ask wrapper to set to default
-      wrapperJ2SE.setDefaultStartPosition();
+      icSetXY(x, y);
+      if (isGenerateEvent) {
+         int screenID = 0;
+         canvasPositionChangedBridge(screenID, x, y);
+      }
+
    }
 
    public void setWrapper(WrapperAbstract wrapper) {
@@ -207,9 +227,56 @@ public abstract class CanvasHostJ2se extends CanvasHostAbstract {
       //look for a position
    }
 
+   /**
+    * Method for those wrappers that just use the default frame positions.
+    * 
+    * This is only called by host implementations that have movable frames
+    * 
+    */
+   protected ByteObject getFramePosNewCurrentState() {
+      //sets current pos. This is the absolute position
+
+      //delegate to the wrapper how to set the ui state
+      ByteObject framePos = cuc.createBOFrameDefault();
+      CanvasHostAbstract ch = this;
+
+      //wrapper size
+
+      int cx = ch.getICX(); // what is this? the wrapper position or the component position which is 0
+
+      framePos.set2(IBOFramePos.FPOS_OFFSET_02_X2, cx);
+      framePos.set2(IBOFramePos.FPOS_OFFSET_03_Y2, ch.getICY());
+      framePos.set2(IBOFramePos.FPOS_OFFSET_04_W2, ch.getICWidth());
+      framePos.set2(IBOFramePos.FPOS_OFFSET_05_H2, ch.getICHeight());
+
+      boolean isFullScreen = ch.isCanvasFeatureEnabled(SUP_ID_27_FULLSCREEN);
+      framePos.setFlag(IBOFramePos.FPOS_OFFSET_01_FLAG, IBOFramePos.FPOS_FLAG_1_FULLSCREEN, isFullScreen);
+
+      boolean isAlwaysOnTop = ch.isCanvasFeatureEnabled(SUP_ID_28_ALWAYS_ON_TOP);
+      framePos.setFlag(IBOFramePos.FPOS_OFFSET_01_FLAG, IBOFramePos.FPOS_FLAG_5_ALWAYS_ON_TOP, isAlwaysOnTop);
+
+      return framePos;
+   }
+
    public void stateWriteTo(StatorWriter state) {
       super.stateWriteTo(state);
 
+      //#debug
+      toDLog().pStator("Writing", state, CanvasHostJ2se.class, "stateWriteTo@130", LVL_04_FINER, true);
+   }
+
+   public void stateWriteToParamSub(StatorWriter state) {
+
+      //write framepos to can
+      boCanvasHost.setFlag(IBOCanvasHost.CANVAS_HOST_OFFSET_02_FLAX1, IBOCanvasHost.CANVAS_HOST_FLAGX_1_CUSTOM_POS, true);
+      ByteObject boFramePos = getFramePosNewCurrentState();
+      boCanvasHost.setSubIndexed1(boFramePos, IBOCanvasHost.CANVAS_HOST_OFFSET_14_FRAMEPOS1);
+
+      //#debug
+      toDLog().pStator("boFramePos", boFramePos, CanvasHostJ2se.class, "stateWriteToParamSub@274", LVL_04_FINER, true);
+
+      //now call super for writing it
+      super.stateWriteToParamSub(state);
    }
 
    //#mdebug

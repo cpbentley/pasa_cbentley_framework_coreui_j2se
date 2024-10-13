@@ -2,7 +2,7 @@ package pasa.cbentley.framework.core.ui.j2se.ctx;
 
 import pasa.cbentley.framework.core.ui.src4.ctx.IBOCtxSettingsCoreUi;
 
-public interface ITechCtxSettingsCoreUIJ2se extends IBOCtxSettingsCoreUi {
+public interface ITechCtxSettingsCoreUiJ2se extends IBOCtxSettingsCoreUi {
 
    public static final int CTX_COREUIJ2_BASIC_SIZE       = CTX_COREUI_BASIC_SIZE + 9;
 
