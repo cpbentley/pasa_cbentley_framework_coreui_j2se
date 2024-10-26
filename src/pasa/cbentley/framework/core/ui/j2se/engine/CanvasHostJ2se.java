@@ -171,18 +171,28 @@ public abstract class CanvasHostJ2se extends CanvasHostAbstract {
       switch (keyCode) {
          case KeyEvent.VK_F1:
             pointerID = 0;
+            //#debug
+            toDLog().pCmd("F1 changes pointerID to "+ pointerID, this, toStringGetLine(CanvasHostJ2se.class, "simulatePointer", 175), LVL_05_FINE, true);
             break;
          case KeyEvent.VK_F2:
             pointerID = 1;
+            //#debug
+            toDLog().pCmd("F2 changes pointerID to "+ pointerID, this, toStringGetLine(CanvasHostJ2se.class, "simulatePointer", 175), LVL_05_FINE, true);
             break;
          case KeyEvent.VK_F3:
             pointerID = 2;
+            //#debug
+            toDLog().pCmd("F3 changes pointerID to "+ pointerID, this, toStringGetLine(CanvasHostJ2se.class, "simulatePointer", 175), LVL_05_FINE, true);
             break;
          case KeyEvent.VK_F4:
             pointerID = 3;
+            //#debug
+            toDLog().pCmd("F4 changes pointerID to "+ pointerID, this, toStringGetLine(CanvasHostJ2se.class, "simulatePointer", 175), LVL_05_FINE, true);
             break;
          case KeyEvent.VK_F5:
             pointerID = 4;
+            //#debug
+            toDLog().pCmd("F5 changes pointerID to "+ pointerID, this, toStringGetLine(CanvasHostJ2se.class, "simulatePointer", 175), LVL_05_FINE, true);
             break;
          default:
             break;
@@ -201,6 +211,10 @@ public abstract class CanvasHostJ2se extends CanvasHostAbstract {
       if (bentleyKeyCode == KeyEvent.VK_F12) {
          //simulate shake
          SenseEvent ge = new SenseEvent(cuc, ITechSenses.GESTURE_TYPE_05_SHAKE);
+
+         //#debug
+         toDLog().pEvent("F12: Simulating Shake SenseEvent", ge, toStringGetLine(CanvasHostJ2se.class, "simulationKeys", 40), LVL_05_FINE, true);
+         
          eventBridgeGuiLater(ge);
       } else if (bentleyKeyCode == KeyEvent.VK_F11) {
          VoiceEvent ge = new VoiceEvent(cuc);

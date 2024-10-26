@@ -47,6 +47,10 @@ public abstract class HostDataUiJ2se extends ObjectCUC implements ITechHostDataD
             return 200;
          case DATA_ID_04_POINTER_DRAG_SLOP:
             return 50;
+         case DATA_ID_06_POINTER_FAST_TYPE_TIMEOUT:
+            return 50;
+         case DATA_ID_07_NUM_START_POINTERS:
+            return 1;
          case DATA_ID_09_SLIDE_MIN_AMPLITUDE:
             return 30;
          case DATA_ID_11_FLING_SPEED_MAX:
